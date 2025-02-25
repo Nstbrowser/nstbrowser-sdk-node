@@ -1,0 +1,67 @@
+{
+  "name": "nstbrowser-sdk-node",
+  "version": "1.0.0",
+  "description": "nst browser node sdk",
+  "main": "dist/main.js",
+  "exports": {
+    ".": {
+      "types": {
+        "require": "./dist/main.d.ts",
+        "default": "./dist/main.d.ts"
+      },
+      "browser": {
+        "require": "./dist/main.js",
+        "default": "./dist/main.js"
+      },
+      "default": {
+        "require": "./dist/main.js",
+        "default": "./dist/main.js"
+      }
+    }
+  },
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon --exec ts-node src/main.ts",
+    "build": "rollup --config rollup.config.ts --environment NODE_ENV:production --configPlugin @rollup/plugin-typescript",
+    "build:test": "rollup --config rollup.config.ts --environment NODE_ENV:development --configPlugin @rollup/plugin-typescript",
+    "test": "tsx --test test/*"
+  },
+  "keywords": [
+    "nstbrowser",
+    "nstbrowser-sdk",
+    "nstbrowser-sdk-node",
+    "nst",
+    "nst-sdk",
+    "nst-sdk-node",
+    "nstlabs"
+  ],
+  "author": "nstbrowser <nstbrowser@gmail.com> (https://www.nstbrowser.io)",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.16.12",
+    "chai": "^5.1.1",
+    "nodemon": "^3.1.7",
+    "rollup": "^3.29.5",
+    "rollup-plugin-dts": "^6.1.1",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@rollup/plugin-replace": "^5.0.7",
+    "axios": "^1.7.7",
+    "form-data": "^4.0.1",
+    "puppeteer-core": "23.3.0"
+  },
+  "homepage": "https://www.nstbrowser.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NSTBrowser/nstbrowser-sdk-node"
+  }
+}

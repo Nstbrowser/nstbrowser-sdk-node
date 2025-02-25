@@ -1,0 +1,5 @@
+**/*
+!/dist/**
+!/examples/**
+!index.d.ts
+!README.md
