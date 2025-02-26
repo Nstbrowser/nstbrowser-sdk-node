@@ -22,6 +22,10 @@ export type KernelType = 0 | 1;
 
 export type PlatForm = 0 | 1 | 2 | 3 | 4;
 
+export type KernelEnum = 'chromium';
+
+export type PlatformEnum = 'linux' | 'mac' | 'windows';
+
 export type KernelInfo = {
   name: string;
   kernelType: KernelType;
@@ -101,10 +105,17 @@ export interface BrowserProfileStatus {
 
 export interface CreateProfileParam {
   groupId?: string;
-  kernel: KernelType;
+  kernel: KernelEnum;
   kernelMilestone: string;
   name: string;
-  platform: PlatForm;
+  platform: PlatformEnum;
+  args?: Record<string, string>;
+  groupName?: string;
+  fingerprint?: Record<string, any>;
+  note?: string;
+  proxy?: string;
+  proxyGroupName?: string;
+  startupUrls?: string[];
 }
 
 export interface CreateProfileResponse {
@@ -220,7 +231,9 @@ export interface BrowserManager {
   stop: (profileId: string) => Promise<NstResponse<any>>;
   stopSome: (profileIds: string[]) => Promise<NstResponse<any>>;
   stopAll: () => Promise<NstResponse<any>>;
+  /** @deprecated please use `getRunningBrowser` instead */
   getRunningBrowserAll: () => Promise<NstResponse<RunningBrowserInfo[]>>;
+  getRunningBrowser: () => Promise<NstResponse<RunningBrowserInfo[]>>;
   getRemoteDebuggingAddress: (
     profileId: string,
   ) => Promise<NstResponse<string>>;

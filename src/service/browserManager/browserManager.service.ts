@@ -88,6 +88,20 @@ export async function getRunningBrowserAllService(config: SubClassConfig) {
   return data;
 }
 
+export async function getRunningBrowserService(config: SubClassConfig) {
+  const data = await request<NstResponse<RunningBrowserInfo[]>>({
+    url: config.baseUrl + '/browser/running',
+    method: 'get',
+    timeout: config.timeout,
+    headers: {
+      'x-api-key': config.apiKey,
+    },
+  });
+
+  return data;
+}
+
+
 export async function getRemoteWebSocketDebuggingURLService(config: SubClassConfig, profileId: string) {
   const url = config.baseUrl + `/browser/devtool/${profileId}`;
   const data = await request<NstResponse<string>>({

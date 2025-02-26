@@ -6,6 +6,7 @@ import {
   stopSomeService,
   stopAllService,
   getRunningBrowserAllService,
+  getRunningBrowserService,
   getRemoteWebSocketDebuggingURLService,
   getProfilesStatusService,
 } from '@/service/browserManager/browserManager.service.ts';
@@ -55,6 +56,12 @@ function browserManager(config: SubClassConfig): BrowserManager {
     return data;
   }
 
+  async function getRunningBrowser() {
+    const data = await getRunningBrowserService(config);
+
+    return data;
+  }
+
   async function getRemoteDebuggingAddress(profileId: string) {
     const data = await getRemoteWebSocketDebuggingURLService(config, profileId);
 
@@ -75,6 +82,7 @@ function browserManager(config: SubClassConfig): BrowserManager {
     stop,
     stopSome,
     stopAll,
+    getRunningBrowser,
     getRunningBrowserAll,
     getRemoteDebuggingAddress,
   };
