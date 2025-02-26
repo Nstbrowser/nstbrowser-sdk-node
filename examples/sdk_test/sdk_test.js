@@ -1,7 +1,7 @@
 import { NstBrowser } from 'nstbrowser-sdk-node';
 
-const nst = new NstBrowser('acd77f76-6564-46d4-82f5-a0ac770f281c', {
-  apiAddress: 'http://localhost:8848/api/v1',
+const nst = new NstBrowser('your_api_key', {
+  apiAddress: 'http://localhost:8848/api/agent',
 });
 
 const {
@@ -11,7 +11,7 @@ const {
   stop,
   stopSome,
   stopAll,
-  getRunningBrowserAll,
+  getRunningBrowser,
 } = nst.browserManager();
 
 // force start browser
@@ -33,6 +33,6 @@ stopSome(['fd08ec59-071f-4f48-b225-b5dad5f9fda8', 'd8b7aeb2-0dd2-4169-938a-80ab0
 stopAll();
 
 // get all running browsers
-getRunningBrowserAll().then(res => {
+getRunningBrowser().then(res => {
   console.log('all running browsers info: ', res.data);
 });

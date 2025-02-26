@@ -12,7 +12,7 @@ class NstBrowser {
 
   protected apiKey: string = '';
   protected timeout: number = 0;
-  protected apiAddress: string = 'http://localhost:8848/api/v1';
+  protected apiAddress: string = 'http://localhost:8848/api/agent';
 
   constructor(key: string, options?: NstBrowserOption) {
     if (NstBrowser.instance) {
