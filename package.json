@@ -1,6 +1,6 @@
 {
   "name": "nstbrowser-sdk-node",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "nst browser node sdk",
   "main": "dist/main.js",
   "exports": {

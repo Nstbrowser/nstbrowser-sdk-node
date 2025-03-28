@@ -1,7 +1,24 @@
-# NST BROWSER NODE SDK
-Nst browser node sdk
+# Nstbrowser SDK for Node.js
 
-## Installing
+A Node.js SDK for interacting with [Nstbrowser API v2](https://apidocs.nstbrowser.io/)
+
+> **Note**: This documentation is for API v2, which is the recommended version with complete functionality from v1 plus additional features. For v1 documentation, please refer to [README-v1.md](./README-v1.md). New users are encouraged to use v2 for a more stable and standardized experience.
+
+## Overview
+
+This SDK implements Nstbrowser API v2, providing a comprehensive set of tools for managing browser profiles, controlling browser instances, managing local browser data, and utilizing Chrome DevTools Protocol (CDP) for browser automation.
+
+The SDK enables you to:
+- Create and manage browser profiles with detailed fingerprint configurations
+- Start and stop browser instances individually or in batch
+- Configure and manage proxies for profiles
+- Manage profile tags for better organization
+- Clear browser cache and cookies
+- Connect to browsers using Chrome DevTools Protocol (CDP)
+- Automate browser actions through CDP integration with Puppeteer
+
+## Installation
+
 Using npm:
 
 ```bash
@@ -20,428 +37,122 @@ Using yarn:
 $ yarn add nstbrowser-sdk-node
 ```
 
-## How To Use
+## Getting Started
 
-javascript:
+To use the SDK, you need an API key from Nstbrowser:
 
-```js
-import { NstBrowser } from 'nstbrowser-sdk-node';
+```javascript
+import { NstBrowserV2 } from 'nstbrowser-sdk-node';
 
-const nst = new NstBrowser('your api key', {
+// Initialize the client with your API key
+const client = new NstBrowserV2('your_api_key', {
   timeout: 60000,
-  apiAddress: 'http://localhost:8848/api/agent'
+  apiAddress: 'http://localhost:8848/api/v2'
 });
-const { getLatestVersion } = nst.agentManager();
-getLatestVersion();
+
+// Now you can use the various services
+const profileId = 'your_profile_id';
+
+// Start a browser instance
+const startResponse = await client.browsers().startBrowser({ profileId });
+console.log('Browser started:', startResponse);
+
+// Stop the browser instance
+const stopResponse = await client.browsers().stopBrowser({ profileId });
+console.log('Browser stopped:', stopResponse);
 ```
 
-typescript:
+## CDP Integration with Puppeteer
 
-```ts
-import { NstBrowser, NstBrowserTypes } from 'nstbrowser-sdk-node';
+One of the most powerful features of the SDK is its seamless integration with Puppeteer for browser automation:
 
-const nst: NstBrowserTypes = new NstBrowser('your api key', {
-  timeout: 60000,
-  apiAddress: 'http://localhost:8848/api/agent'
-});
-const { getLatestVersion } = nst.agentManager();
-getLatestVersion();
-```
+```javascript
+import { NstBrowserV2 } from 'nstbrowser-sdk-node';
+import puppeteer from 'puppeteer-core';
 
-Browserless:
-
-```js
-import { Browserless } from 'nstbrowser-sdk-node';
-
-const browserless = new Browserless({
-  apiKey: 'your api key',
-  proxy: 'your proxy', // required
-})
-
-browserless.load('https://nstbrowser.io').then(text => {
+async function automateWithPuppeteer() {
+  const client = new NstBrowserV2('your_api_key');
   
-})
-```
+  // Connect to a browser using CDP
+  const cdpResponse = await client.cdpEndpoints().connectBrowser({
+    profileId: 'your_profile_id',
+    config: {
+      headless: false,
+      autoClose: false
+    }
+  });
 
-## NstBrowser Node Sdk Response Schema:
+  // Connect Puppeteer to the browser instance
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: cdpResponse.data.webSocketDebuggerUrl,
+    defaultViewport: null
+  });
 
-```js
-{
-  // `data` is the response
-  "data": {},
-    
-  // `code` is the HTTP status code
-  "code": 200,
+  // Use Puppeteer for automation
+  const page = await browser.newPage();
+  await page.goto('https://example.com');
   
-  // `err` is the request's status
-  "err": false,
-  
-  "msg": "success"
+  // ... perform other actions
 }
 ```
 
+## Examples
 
+The SDK comes with a comprehensive set of examples in the `/examples/v2` directory. To run the examples:
 
-## BrowserManager
-
-### forceStart
-
-force start the browser by profileId
-```ts
-const { forceStart } = nst.browserManager();
-forceStart(profileId: string);
+1. Navigate to the examples directory and install dependencies:
+```bash
+cd examples/v2
+npm install
 ```
 
-### start
-
-start the browser by profileId
-
-```ts
-const { start } = nst.browserManager();
-start(profileId: string);
+2. Create a `.env` file in the `examples/v2` directory and add your API key:
+```bash
+echo "nstbrowser_api_key=your-api-key" > .env
 ```
 
-### startSome
-
-batch start browser by profileIds
-
-```ts
-const { startSome } = nst.browserManager();
-startSome(profileIds: string[]);
+3. Run any example:
+```bash
+node browsers/startBrowser.js
 ```
 
-### stop
-
-stop the browser by profileId
-
-```ts
-const { stop } = nst.browserManager();
-stop(profileId: string);
-```
-
-### stopSome
-
-batch stop browser by profileIds
-
-```ts
-const { stopSome } = nst.browserManager();
-stopSome(profileIds: string[]);
-```
-
-### stopAll
-
-stop all running browser
-
-```ts
-const { stopAll } = nst.browserManager();
-stopAll();
-```
-
-### getRunningBrowserAll
-
-get all running browser's info
-
-```ts
-const { getRunningBrowserAll } = nst.browserManager();
-getRunningBrowserAll();
-```
-
-response data:
-
-```js
-[
-  {
-    profileId: "string",
-    name: "string",
-    version: "string",
-    kernelType: "string", // nstchrome | nstfirefox
-    running: "boolean",
-    userDirPath: "string"
-  }
-]
-```
-
-### getRemoteDebuggingAddress
-
-get browser remote web socket debugging url
-
-```ts
-const { getRemoteDebuggingAddress } = nst.browserManager();
-getRemoteDebuggingAddress(profileId: string);
-```
-
-### getProfilesStatus
-
-get all profiles status
-```ts
-const { getProfilesStatus } = nst.browserManager();
-getProfilesStatus();
-```
-
-
-
-## ProfileManager
-
-### createProfile
-
-create profile
-
-[Detail docs](https://apidocs.nstbrowser.io/api-5496096)
-
-```ts
-const { createProfile } = nst.profileManager();
-createProfile({
-  "kernel": "chromium",
-  "kernelMilestone": "120",
-  "name": "Profile",
-  "platform": "windows"
-});
-```
-
-response data:
-```js
-{
-  "_id": "string",
-  "createdAt": "string",
-  "fingerprintId": "string",
-  "groupId": "string",
-  "kernel": 0,
-  "kernelMilestone": "string",
-  "kernelVersion": "string",
-  "name": "string",
-  "note": "string",
-  "platform": 0,
-  "platformVersion": "string",
-  "profileId": "string",
-  "saveLocal": true,
-  "status": 0,
-  "tags": [
-    "string"
-  ],
-  "teamId": "string",
-  "uaFullVersion": "string",
-  "updatedAt": "string",
-  "userId": "string"
-}
-```
-
-### deleteProfile
-
-delete profile by profileId
-
-```ts
-const { deleteProfile } = nst.profileManager();
-deleteProfile(profileId: string);
-```
-
-### profiles
-
-list profiles
-
-```ts
-const { profiles } = nst.profileManager();
-profiles({
-  	page: 1,
-	  pageSize: 10,
-  	s: '',
-  	groupId: ''
-});
-```
-
-response data:
-
-```js
-"data": {
-    "docs": [
-        {
-            "fingerprintId": "string",
-            "groupId": "string",
-            "kernel": 0,
-            "kernelMilestone": "string",
-            "kernelVersion": "string",
-            "name": "string",
-            "note": "string",
-            "platform": 0,
-            "platformVersion": "string",
-            "profileId": "string",
-            "proxyConfig": {
-                "checker": "string",
-                "host": "string",
-                "password": "string",
-                "port": "string",
-                "protocol": "string",
-                "proxySetting": "string",
-                "proxyType": "string",
-                "url": "string",
-                "username": "string"
-            },
-            "tags": [
-                "string"
-            ],
-            "teamId": "string",
-            "uaFullVersion": "string",
-            "userId": "string"
-        }
-    ],
-    "hasNextPage": true,
-    "hasPrevPage": true,
-    "limit": 0,
-    "nextPage": 0,
-    "offset": 0,
-    "page": 0,
-    "pagingCounter": 0,
-    "prevPage": 0,
-    "totalDocs": 0,
-    "totalPages": 0
-}
-```
-
-### batchUpdateProxy
-
-batch update proxy for profiles, if proxy url is empty,you should set value to: protocol、host and port, otherwise set proxy url just fine.
-
-```ts
-const { batchUpdateProxy } = nst.profileManager();
-batchUpdateProxy({
-  "profileIds": ["string"],
-  "proxyConfig": {
-    "checker": "string",
-    "host": "string",
-    "password": "string",
-    "port": "string",
-    "protocol": "string",
-    "proxySetting": "string",
-    "proxyType": "string",
-    "url": "string",
-    "username": "string"
-  }
-});
-```
-
-### getProfileTags
-get all profile tags
-
-```ts
-const { getProfileTags } = nst.profileManager();
-getProfileTags();
-```
-
-response data:
-
-```js
-[
-  {
-    color: "string",
-    name: "string",
-  }
-]
-```
-
-### batchUpdateProfileTags
-batch update profile tags
-
-```ts
-const { batchUpdateProfileTags } = nst.profileManager();
-
-batchUpdateProfileTags({
-  "profileIds": string[],
-  "tags": {
-    "color": string;
-    "name": string;
-  }[]
-});
-```
-
-### batchCreateProfileTags
-batch create profile tags
-
-```ts
-const { batchCreateProfileTags } = nst.profileManager();
-
-batchCreateProfileTags({
-  "profileIds": string[],
-  "tags": {
-    "color": string;
-    "name": string;
-  }[]
-});
-```
-
-### batchClearProfileTags
-
-batch clear profile tags
-
-```ts
-const { batchClearProfileTags } = nst.profileManager();
-
-batchClearProfileTags({
-  "profileIds": ["string"]
-});
-```
-
-### clearCookies
-
-clear local cookies by profileId
-
-```ts
-const { clearCookies } = nst.profileManager();
-clearCookies("profileId")
-```
-
-### clearProfileCache
-
-clear user profile dir.
-
-```ts
-const { clearProfileCache } = nst.profileManager();
-clearProfileCache("profileId")
-```
-
-### batchClearProfileCache
-
-batch clear user profile dir.
-
-```ts
-const { batchClearProfileCache } = nst.profileManager();
-batchClearProfileCache(["profileId"])
-```
-
-## Devtool
-
-### launchNewBrowser
-
-launch new browser
-[Detail docs](https://apidocs.nstbrowser.io/api-5418530)
-```ts
-const { launchNewBrowser } = nst.devtool();
-launchNewBrowser(config);
-```
-
-response data:
-
-```js
-{
-  "port": 0,
-  "webSocketDebuggerUrl": "string"
-}
-```
-
-### launchExistBrowser
-
-launch exist browser
-[Detail docs](https://apidocs.nstbrowser.io/api-5418531)
-```ts
-const { launchExistBrowser } = nst.devtool();
-launchExistBrowser(profileId: string, {
-	config?: string,
-});
-```
-
-response data:
-
-```js
-{
-  "port": 0,
-  "webSocketDebuggerUrl": "string"
-}
-```
+Available examples are organized by service:
+
+### Browser Examples
+- `browsers/getBrowserDebugger.js`: Get browser debugger information for automation
+- `browsers/getBrowserPages.js`: Get information about browser pages
+- `browsers/getBrowsers.js`: Get list of active browsers with status information
+- `browsers/startBrowser.js`: Start a browser for a specific profile
+- `browsers/startBrowsers.js`: Start multiple browsers in batch
+- `browsers/startOnceBrowser.js`: Start a once-off browser with custom configuration
+- `browsers/stopBrowser.js`: Stop a specific browser instance
+- `browsers/stopBrowsers.js`: Stop multiple browser instances in batch
+
+### Profile Examples
+- `profiles/batchClearProfileTags.js`: Clear tags for multiple profiles in batch
+- `profiles/batchCreateProfileTags.js`: Create tags for multiple profiles in batch
+- `profiles/batchResetProfileProxy.js`: Reset proxies for multiple profiles in batch
+- `profiles/batchUpdateProfileTags.js`: Update tags for multiple profiles in batch
+- `profiles/batchUpdateProxy.js`: Update proxies for multiple profiles in batch
+- `profiles/clearProfileTags.js`: Clear all tags from a specific profile
+- `profiles/createProfile.js`: Create a new profile with detailed configuration
+- `profiles/createProfileTags.js`: Create new tags for a specific profile
+- `profiles/deleteProfile.js`: Delete a specific profile
+- `profiles/deleteProfiles.js`: Delete multiple profiles in batch
+- `profiles/getProfileTags.js`: Get all tags associated with profiles
+- `profiles/getProfiles.js`: Get profiles with filtering options
+- `profiles/resetProfileProxy.js`: Reset proxy configuration for a specific profile
+- `profiles/updateProfileProxy.js`: Update proxy configuration for a specific profile
+- `profiles/updateProfileTags.js`: Update tags for a specific profile
+
+### Local Data Examples
+- `locals/clearProfileCache.js`: Clear browser cache for a specific profile
+- `locals/clearProfileCookies.js`: Clear browser cookies for a specific profile
+
+### CDP Endpoint Examples
+- `cdpEndpoints/connectBrowser.js`: Connect to a browser using CDP and automate with Puppeteer
+- `cdpEndpoints/connectOnceBrowser.js`: Connect to a once-off browser with CDP and automate with Puppeteer
+
+## Support
+
+For support, feel free to reach out to us via [Discord](https://api.nstbrowser.io/api/v1/links/discord). For more detailed documentation, visit the official Nstbrowser documentation: [Nstbrowser API Documentation](https://apidocs.nstbrowser.io).

@@ -26,6 +26,8 @@ export type KernelEnum = 'chromium';
 
 export type PlatformEnum = 'linux' | 'mac' | 'windows';
 
+export type BrowserStatus = 'starting' | 'running' | 'stopping';
+
 export type KernelInfo = {
   name: string;
   kernelType: KernelType;
@@ -116,6 +118,35 @@ export interface CreateProfileParam {
   proxy?: string;
   proxyGroupName?: string;
   startupUrls?: string[];
+}
+
+export interface ConnectBrowserParam {
+  autoClose?: boolean;
+  timedCloseSec?: number;
+  headless?: boolean;
+  incognito?: boolean;
+  skipProxyChecking?: boolean;
+  remoteDebuggingPort?: string;
+  args?: Record<string, string>;
+  proxy?: string;
+  startupUrls?: string[];
+  clearCacheOnClose: boolean;
+}
+
+export interface StartOnceBrowserParam
+  extends CreateProfileParam,
+    ConnectBrowserParam {
+  fingerprintRandomness?: boolean;
+}
+
+export interface BrowserPagesData {
+  description: string;
+  devtoolsFrontendUrl: string;
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+  webSocketDebuggerUrl: string;
 }
 
 export interface CreateProfileResponse {
