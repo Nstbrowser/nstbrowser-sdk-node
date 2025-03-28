@@ -54,11 +54,11 @@ const client = new NstBrowserV2('your_api_key', {
 const profileId = 'your_profile_id';
 
 // Start a browser instance
-const startResponse = await client.browsers.startBrowser({ profileId });
+const startResponse = await client.browsers().startBrowser({ profileId });
 console.log('Browser started:', startResponse);
 
 // Stop the browser instance
-const stopResponse = await client.browsers.stopBrowser({ profileId });
+const stopResponse = await client.browsers().stopBrowser({ profileId });
 console.log('Browser stopped:', stopResponse);
 ```
 
@@ -74,7 +74,7 @@ async function automateWithPuppeteer() {
   const client = new NstBrowserV2('your_api_key');
   
   // Connect to a browser using CDP
-  const cdpResponse = await client.cdpEndpoints.connectBrowser({
+  const cdpResponse = await client.cdpEndpoints().connectBrowser({
     profileId: 'your_profile_id',
     config: {
       headless: false,
