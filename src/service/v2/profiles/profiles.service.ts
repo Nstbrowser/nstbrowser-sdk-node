@@ -231,3 +231,39 @@ export async function getProfileTagsService(config: SubClassConfig) {
   });
   return res;
 }
+
+export async function getAllProfileGroupsService(config: SubClassConfig, groupName?: string) {
+  const url = `${config.baseUrl}/profiles/groups`;
+  const res = await request<NstResponse<any>>({
+    url,
+    method: 'get',
+    params: { groupName },
+    timeout: config.timeout,
+    headers: { 'x-api-key': config.apiKey },
+  });
+  return res;
+}
+
+export async function changeProfileGroupService(config: SubClassConfig, profileId: string, groupId: string) {
+  const url = `${config.baseUrl}/profiles/${profileId}/group`;
+  const res = await request<NstResponse<any>>({
+    url,
+    method: 'put',
+    timeout: config.timeout,
+    data: { groupId },
+    headers: { 'x-api-key': config.apiKey },
+  });
+  return res;
+}
+
+export async function batchChangeProfileGroupService(config: SubClassConfig, data: { profileIds: string[], groupId: string }) {
+  const url = `${config.baseUrl}/profiles/group/batch`;
+  const res = await request<NstResponse<any>>({
+    url,
+    method: 'put',
+    timeout: config.timeout,
+    data,
+    headers: { 'x-api-key': config.apiKey },
+  });
+  return res;
+}
