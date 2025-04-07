@@ -144,6 +144,9 @@ Available examples are organized by service:
 - `profiles/resetProfileProxy.js`: Reset proxy configuration for a specific profile
 - `profiles/updateProfileProxy.js`: Update proxy configuration for a specific profile
 - `profiles/updateProfileTags.js`: Update tags for a specific profile
+- `profiles/getAllProfileGroups.js`: Get all profile groups
+- `profiles/changeProfileGroup.js`: Change a profile group
+- `profiles/batchChangeProfileGroup.js`: Batch changes to profile groups
 
 ### Local Data Examples
 - `locals/clearProfileCache.js`: Clear browser cache for a specific profile

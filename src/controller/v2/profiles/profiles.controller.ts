@@ -15,6 +15,9 @@ import {
   deleteProfilesService,
   getProfilesService,
   getProfileTagsService,
+  getAllProfileGroupsService,
+  batchChangeProfileGroupService,
+  changeProfileGroupService,
 } from '@/service/v2/profiles/profiles.service';
 
 import type {
@@ -102,6 +105,22 @@ function profilesController(config: SubClassConfig) {
     return data;
   }
 
+  async function getAllProfileGroups(groupName?: string) {
+    const data = await getAllProfileGroupsService(config,groupName);
+    return data;
+  }
+
+  async function changeProfileGroup(profileId: string, groupId: string) {
+    const data = await changeProfileGroupService(config, profileId, groupId);
+    return data;
+  }
+
+  async function batchChangeProfileGroup(param: { profileIds: string[], groupId: string }) {
+    const data = await batchChangeProfileGroupService(config, param);
+    return data;
+  }
+
+
   return {
     updateProfileProxy,
     resetProfileProxy,
@@ -118,6 +137,9 @@ function profilesController(config: SubClassConfig) {
     deleteProfiles,
     getProfiles,
     getProfileTags,
+    getAllProfileGroups,
+    changeProfileGroup,
+    batchChangeProfileGroup
   };
 }
 
